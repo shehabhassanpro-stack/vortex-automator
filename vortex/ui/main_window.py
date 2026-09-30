@@ -32,6 +32,7 @@ class MainWindow(ctk.CTk):
 
         # State
         self._current_tab = "presser"  # "presser" | "clicker"
+        self._target_key_name = "e"
         self._presser_hotkey = keyboard.Key.f7
         self._clicker_hotkey = keyboard.Key.f6
         self._binding_target: Optional[str] = None
@@ -74,8 +75,15 @@ class MainWindow(ctk.CTk):
         self.content_container.pack(fill="both", expand=True, padx=20, pady=20)
 
         # Initialize Views
-        self.presser_view = PresserView(self.content_container, on_bind_clicked=lambda: self._start_binding("presser"))
-        self.clicker_view = ClickerView(self.content_container, on_bind_clicked=lambda: self._start_binding("clicker"))
+        self.presser_view = PresserView(
+            self.content_container,
+            on_target_bind_clicked=lambda: self._start_binding("target_key"),
+            on_hotkey_bind_clicked=lambda: self._start_binding("presser_hotkey")
+        )
+        self.clicker_view = ClickerView(
+            self.content_container,
+            on_bind_clicked=lambda: self._start_binding("clicker_hotkey")
+        )
 
         # 4. Big Action Button
         self.btn_action = ctk.CTkButton(
@@ -119,10 +127,9 @@ class MainWindow(ctk.CTk):
             self._automation.stop()
         else:
             if self._current_tab == "presser":
-                key_input = self.presser_view.key_entry.get().strip()
                 mode = self.presser_view.mode_var.get()
                 interval = self.presser_view.delay_var.get()
-                success = self._automation.start_keyboard(key_input, mode, interval)
+                success = self._automation.start_keyboard(self._target_key_name, mode, interval)
                 if not success:
                     return
             else:
@@ -149,21 +156,26 @@ class MainWindow(ctk.CTk):
 
     def _start_binding(self, target: str) -> None:
         self._binding_target = target
-        if target == "presser":
-            self.presser_view.set_binding_prompt()
+        if target == "target_key":
+            self.presser_view.set_target_binding_prompt()
+        elif target == "presser_hotkey":
+            self.presser_view.set_hotkey_binding_prompt()
         else:
             self.clicker_view.set_binding_prompt()
 
     def _on_global_hotkey(self, key: Any) -> None:
-        # Handle Binding
+        # Handle Interactive Key Binding
         if self._binding_target:
             key_name = HotkeyService.format_key_name(key)
-            if self._binding_target == "presser":
+            if self._binding_target == "target_key":
+                self._target_key_name = key_name
+                self.presser_view.set_target_key_text(f"[ {key_name} ]")
+            elif self._binding_target == "presser_hotkey":
                 self._presser_hotkey = key
                 self.presser_view.set_hotkey_text(f"[ {key_name} ]")
                 if self._current_tab == "presser" and not self._automation.is_running:
                     self.btn_action.configure(text=f"START ({key_name})")
-            else:
+            elif self._binding_target == "clicker_hotkey":
                 self._clicker_hotkey = key
                 self.clicker_view.set_hotkey_text(f"[ {key_name} ]")
                 if self._current_tab == "clicker" and not self._automation.is_running:

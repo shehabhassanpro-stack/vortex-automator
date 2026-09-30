@@ -1,5 +1,6 @@
 """
 Keyboard Presser View card component.
+Provides interactive single-key binding for the target key and toggle hotkey.
 """
 
 from typing import Callable
@@ -10,27 +11,34 @@ from vortex.config.theme import (
 )
 
 class PresserView(ctk.CTkFrame):
-    def __init__(self, master, on_bind_clicked: Callable[[], None]):
+    def __init__(
+        self, 
+        master, 
+        on_target_bind_clicked: Callable[[], None],
+        on_hotkey_bind_clicked: Callable[[], None]
+    ):
         super().__init__(master, fg_color="transparent")
-        self._on_bind_clicked = on_bind_clicked
+        self._on_target_bind_clicked = on_target_bind_clicked
+        self._on_hotkey_bind_clicked = on_hotkey_bind_clicked
 
-        # Row 1: Target Key
+        # Row 1: Target Key (Single Key Selector)
         row1 = ctk.CTkFrame(self, fg_color="transparent")
         row1.pack(fill="x", pady=(0, 14))
 
         lbl1 = ctk.CTkLabel(row1, text="Target Key", font=ctk.CTkFont(family=FONT_FAMILY, size=13, weight="bold"), text_color=COLOR_TEXT)
         lbl1.pack(side="left")
 
-        desc1 = ctk.CTkLabel(row1, text="(e.g. E, Space, Shift)", font=ctk.CTkFont(size=11), text_color=COLOR_TEXT_MUTED)
+        desc1 = ctk.CTkLabel(row1, text="(Click to set key)", font=ctk.CTkFont(size=11), text_color=COLOR_TEXT_MUTED)
         desc1.pack(side="left", padx=(6, 0))
 
-        self.key_entry = ctk.CTkEntry(
-            row1, width=90, height=36, font=ctk.CTkFont(family=FONT_FAMILY, size=14, weight="bold"),
-            fg_color=COLOR_SURFACE_LIGHT, border_color=COLOR_BORDER,
-            corner_radius=8, text_color=COLOR_ACCENT, justify="center"
+        self.btn_target = ctk.CTkButton(
+            row1, text="[ E ]", width=90, height=36,
+            font=ctk.CTkFont(family=FONT_FAMILY, size=13, weight="bold"),
+            fg_color=COLOR_SURFACE_LIGHT, text_color=COLOR_ACCENT,
+            border_width=1, border_color=COLOR_BORDER, hover_color=COLOR_BORDER,
+            corner_radius=8, command=self._on_target_bind_clicked
         )
-        self.key_entry.insert(0, "e")
-        self.key_entry.pack(side="right")
+        self.btn_target.pack(side="right")
 
         # Row 2: Mode Selector
         row2 = ctk.CTkFrame(self, fg_color="transparent")
@@ -87,21 +95,21 @@ class PresserView(ctk.CTkFrame):
         )
         self.delay_slider.pack(fill="x")
 
-        # Row 4: Hotkey
+        # Row 4: Toggle Hotkey
         row4 = ctk.CTkFrame(self, fg_color="transparent")
         row4.pack(fill="x", pady=(8, 0))
 
         lbl4 = ctk.CTkLabel(row4, text="Toggle Hotkey", font=ctk.CTkFont(family=FONT_FAMILY, size=13, weight="bold"), text_color=COLOR_TEXT)
         lbl4.pack(side="left")
 
-        self.btn_bind = ctk.CTkButton(
+        self.btn_hotkey = ctk.CTkButton(
             row4, text="[ F7 ]", width=90, height=34,
             font=ctk.CTkFont(family=FONT_FAMILY, size=12, weight="bold"),
             fg_color=COLOR_SURFACE_LIGHT, text_color=COLOR_ACCENT,
             border_width=1, border_color=COLOR_BORDER, hover_color=COLOR_BORDER,
-            corner_radius=8, command=self._on_bind_clicked
+            corner_radius=8, command=self._on_hotkey_bind_clicked
         )
-        self.btn_bind.pack(side="right")
+        self.btn_hotkey.pack(side="right")
 
     def set_mode(self, mode: str) -> None:
         self.mode_var.set(mode)
@@ -116,8 +124,16 @@ class PresserView(ctk.CTkFrame):
             self.delay_slider.configure(state="disabled")
             self.delay_val_lbl.configure(text_color=COLOR_TEXT_MUTED)
 
-    def set_hotkey_text(self, text: str) -> None:
-        self.btn_bind.configure(text=text, text_color=COLOR_ACCENT)
+    # Target Key UI State Methods
+    def set_target_key_text(self, text: str) -> None:
+        self.btn_target.configure(text=text, text_color=COLOR_ACCENT)
 
-    def set_binding_prompt(self) -> None:
-        self.btn_bind.configure(text="Press key...", text_color="#FBBF24")
+    def set_target_binding_prompt(self) -> None:
+        self.btn_target.configure(text="Press key...", text_color="#FBBF24")
+
+    # Hotkey UI State Methods
+    def set_hotkey_text(self, text: str) -> None:
+        self.btn_hotkey.configure(text=text, text_color=COLOR_ACCENT)
+
+    def set_hotkey_binding_prompt(self) -> None:
+        self.btn_hotkey.configure(text="Press key...", text_color="#FBBF24")
