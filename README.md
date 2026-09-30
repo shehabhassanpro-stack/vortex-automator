@@ -13,6 +13,11 @@
 
 **Vortex Automator** is a modern, minimalist, enterprise-grade automation utility for Windows. Built using hardware-level **DirectInput ScanCodes** (`SendInput`), it reliably works across all desktop applications, full-screen games (DirectX, GTA/FiveM, Unity, Unreal Engine), and web environments without being affected by system keyboard language layouts.
 
+<br/>
+
+[![Download Latest Release](https://img.shields.io/badge/⬇️_Download_Vortex.exe_(Direct_Run)-22C55E?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/shehabhassanpro-stack/vortex-automator/releases/download/v2.0.0/Vortex.exe)
+[![GitHub Release](https://img.shields.io/github/v/release/shehabhassanpro-stack/vortex-automator?style=for-the-badge&color=D4AF37)](https://github.com/shehabhassanpro-stack/vortex-automator/releases/latest)
+
 </div>
 
 ---
@@ -65,11 +70,13 @@ For an in-depth breakdown of the Win32 input pipeline, threading synchronization
 
 ---
 
-## 🚀 Quick Start (Pre-built Executable)
+## 🚀 Quick Start (For Non-Programmers)
 
-1. Grab **`Vortex.exe`** from the root or Releases section.
-2. Double-click **`Vortex.exe`** (it will automatically request Administrator privileges to interact with elevated game windows).
-3. Select your desired key/button and mode, then press the hotkey to activate!
+No programming knowledge or Python installation is required!
+
+1. **[📥 Download Vortex.exe Directly (v2.0.0)](https://github.com/shehabhassanpro-stack/vortex-automator/releases/download/v2.0.0/Vortex.exe)** or check the [Releases Page](https://github.com/shehabhassanpro-stack/vortex-automator/releases/latest).
+2. Double-click **`Vortex.exe`** (it automatically requests Administrator rights to ensure it works across all games).
+3. Choose your key or mouse button, select your mode (`Repeat` or `Hold`), and press **F7** (or your custom hotkey) to start!
 
 ---
 
